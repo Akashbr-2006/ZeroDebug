@@ -3,5 +3,5 @@ uvicorn[standard]
 docker
 GitPython
 python-dotenv
-openai
+huggingface_hub
 pydantic
