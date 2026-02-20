@@ -128,7 +128,7 @@ def heal_repo():
     run_command(f'git commit -m "[AI-AGENT] Automatically healed logic errors"', workspace)
     
     # Note: Ensure your local Git is authenticated or use a PAT in the URL
-    push_code, push_logs = run_command(f"git push origin {branch_name}", workspace)
+    push_code, push_logs = run_command(f"git push -f origin {branch_name}", workspace)
     
     if push_code == 0:
         print(f"🏁 DONE! Branch '{branch_name}' pushed successfully.")

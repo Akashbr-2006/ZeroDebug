@@ -3,7 +3,7 @@ from agent import ZeroDebugAgent
 from sandbox import SandboxManager
 from git_manager import GitManager
 
-def run_healing_cycle(repo_url, log_hook):
+async def run_healing_cycle(repo_url, log_hook):
     TEAM, LEADER = "ZERO_DEBUG", "AKASH_BR"
     agent = ZeroDebugAgent(TEAM, LEADER)
     sandbox = SandboxManager()
