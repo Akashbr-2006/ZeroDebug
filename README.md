@@ -30,7 +30,7 @@ The system monitors the pipeline and repeats the healing process (up to a config
 
 Reporting: Final results, including a score breakdown and fix history, are pushed to the live dashboard.
 
-src="img1234.jpeg"
+src="assets/image_a9939d.jpg".
 
  Key Features
 
