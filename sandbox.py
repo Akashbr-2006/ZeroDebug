@@ -22,8 +22,15 @@ class SandboxManager:
         return job_dir
 
     def run_tests_in_docker(self, workspace_path: str) -> dict:
-        # Use full traceback so the AI has maximum context
-        full_command = 'sh -c "pip install --quiet pytest && PYTHONPATH=. pytest -vv --tb=long ."'
+        # 1. Install local requirements if they exist
+        # 2. Force PYTHONPATH so local imports work
+        # 3. Run pytest with maximum detail for the AI
+        full_command = (
+            'sh -c "if [ -f requirements.txt ]; then pip install --quiet -r requirements.txt; fi && '
+            'pip install --quiet pytest && '
+            'export PYTHONPATH=$PYTHONPATH:. && '
+            'pytest -vv --tb=long ."'
+        )
         
         try:
             output = self.docker_client.containers.run(
@@ -38,7 +45,8 @@ class SandboxManager:
             )
             return {"status": "PASSED", "logs": output.decode('utf-8')}
         except docker.errors.ContainerError as e:
+            # Capture the full detailed traceback for Qwen-32B
             return {
                 "status": "FAILED", 
-                "logs": e.stderr.decode('utf-8') if e.stderr else "Test execution failed."
+                "logs": e.stderr.decode('utf-8') if e.stderr else "Execution Error"
             }

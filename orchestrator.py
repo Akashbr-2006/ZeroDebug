@@ -24,23 +24,24 @@ def run_healing_cycle(repo_url, log_hook):
         run = sandbox.run_tests_in_docker(workspace)
         
         if run["status"] == "PASSED":
-            log_hook("✅ SUCCESS: All tests passed.")
+            log_hook("✅ SUCCESS: All bugs healed!")
             break
             
-        log_hook(f"❌ Tests failed. Sending {target_file} to AI for healing...")
+        log_hook(f"❌ Tests failed. Scanning files for healing...")
         
-        with open(file_path, 'r', encoding='utf-8') as f:
-            current_code = f.read()
-        
-        fixed_code = agent.generate_fix(run["logs"], current_code)
-        
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(fixed_code)
-        
-        results.append({"iteration": i+1, "file": target_file})
-
-    if results:
-        log_hook("Pushing fixes to GitHub...")
-        git.commit_and_push("AI-powered healing cycle completed")
-    
+        # DYNAMIC SCAN: Check all python files in the root
+        for file_name in os.listdir(workspace):
+            if file_name.endswith(".py") and not file_name.startswith("test_"):
+                file_path = os.path.join(workspace, file_name)
+                
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    current_code = f.read()
+                
+                # The AI now checks if this specific file contains the bug from the logs
+                fixed_code = agent.generate_fix(run["logs"], current_code)
+                
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(fixed_code)
+                
+                log_hook(f"🛠️ AI Audit completed for {file_name}")
     return results
